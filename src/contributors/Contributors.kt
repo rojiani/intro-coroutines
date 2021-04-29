@@ -53,6 +53,9 @@ interface Contributors: CoroutineScope {
         val service = createGitHubService(req.username, req.password)
 
         val startTime = System.currentTimeMillis()
+
+        // updateResults updates the UI, so it must be called from the
+        // UI thread.
         when (getSelectedVariant()) {
             BLOCKING -> { // Blocking UI thread
                 val users = loadContributorsBlocking(service, req)
