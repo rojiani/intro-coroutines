@@ -25,4 +25,3 @@ fun loadContributorsBlocking(service: GitHubService, req: RequestData) : List<Us
 fun <T> Response<List<T>>.bodyList(): List<T> {
     return body() ?: listOf()
 }
-`

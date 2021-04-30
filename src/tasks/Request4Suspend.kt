@@ -14,6 +14,7 @@ suspend fun loadContributorsSuspend(service: GitHubService, req: RequestData): L
         .bodyList()
 
     return repos.flatMap { repo ->
+        // Note: these are called sequentially - see Request5Concurrent for
         service.getRepoContributors(req.org, repo.name)
             .also { logUsers(repo, it) }
             .bodyList()
