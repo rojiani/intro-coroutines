@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.http.GET
@@ -24,6 +25,18 @@ interface GitHubService {
         @Path("owner") owner: String,
         @Path("repo") repo: String
     ): Call<List<User>>
+
+    // Suspending versions
+    @GET("orgs/{org}/repos?per_page=100")
+    suspend fun getOrgRepos(
+        @Path("org") org: String
+    ): Response<List<Repo>>
+
+    @GET("repos/{owner}/{repo}/contributors?per_page=100")
+    suspend fun getRepoContributors(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String
+    ): Response<List<User>>
 }
 
 @Serializable
@@ -47,7 +60,8 @@ data class RequestData(
 
 @OptIn(ExperimentalSerializationApi::class)
 fun createGitHubService(username: String, password: String): GitHubService {
-    val authToken = "Basic " + Base64.getEncoder().encode("$username:$password".toByteArray()).toString(Charsets.UTF_8)
+    val authToken =
+        "Basic " + Base64.getEncoder().encode("$username:$password".toByteArray()).toString(Charsets.UTF_8)
     val httpClient = OkHttpClient.Builder()
         .addInterceptor { chain ->
             val original = chain.request()
